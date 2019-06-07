@@ -30,6 +30,20 @@ class RequireKeywordDocumentation(KeywordRule):
         self.report(keyword, "No keyword documentation", keyword.linenumber+1)
 
 
+class RequireFirstLettersCapitalized(KeywordRule):
+    """
+    The first letter of every word need be capitalized
+    06/07/2019 carson
+    """
+    severity = ERROR
+
+    def apply(self, keyword):
+        for word in keyword.name.split():
+            if word != word.capitalize():
+                self.report(keyword, "Not suit First Letter Capital in Keywords", keyword.linenumber)
+                return
+        return
+
 class TooFewKeywordSteps(KeywordRule):
     '''Keywords should have at least a minimum number of steps
 
