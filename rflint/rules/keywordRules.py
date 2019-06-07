@@ -32,7 +32,8 @@ class RequireKeywordDocumentation(KeywordRule):
 
 class RequireFirstLettersCapitalized(KeywordRule):
     """
-    The first letter of every word need be capitalized
+    The first letter of every word need be capitalized except acronym
+
     06/07/2019 carson
     """
     severity = ERROR
@@ -40,6 +41,8 @@ class RequireFirstLettersCapitalized(KeywordRule):
     def apply(self, keyword):
         for word in keyword.name.split():
             if word != word.capitalize():
+                if word == word.upper():
+                    continue
                 self.report(keyword, "Not suit First Letter Capital in Keywords", keyword.linenumber)
                 return
         return
