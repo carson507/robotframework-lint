@@ -3,6 +3,20 @@ from rflint.common import TestRule, KeywordRule, GeneralRule, ERROR, WARNING
 import re
 
 
+class RequiredIndentRules(GeneralRule):
+    """
+    This is for Indentation of Nokia coding rules: No tab, only 4 white spaces are used for indentation
+    06/07/2018 Carson
+    """
+    severity = ERROR
+
+    def apply(self, robot_file):
+        for linenumber, line in enumerate(robot_file.raw_text.split("\n")):
+            if len(line) == len(line.lstrip(' ')) or len(line) == len(line.lstrip(' '))+4:
+                continue
+            self.report(robot_file, "Not Suit Required Indentation Rules", linenumber+1)
+
+
 class LineTooLong(GeneralRule):
     '''Check that a line is not too long (configurable; default=100)'''
 
@@ -56,22 +70,6 @@ class TrailingWhitespace(GeneralRule):
             if len(line) != len(line.rstrip(' ')):
                 message = "Line has trailing whitespace"
                 self.report(robot_file, message, linenumber+1)
-
-
-class RequiredIndentRules(GeneralRule):
-    """
-    This is for Indentation of Nokia coding rules: No tab, only 4 white spaces are used for indentation
-    06/07/2018 Carson
-    """
-    severity = ERROR
-
-    def apply(self, robot_file):
-        for linenumber, line in enumerate(robot_file.raw_text.split("\n")):
-            if len(line) == len(line.lstrip(' ')) or len(line) == len(line.lstrip(' '))+4:
-                continue
-            self.report(robot_file, "Not Suit Required Indentation Rules", linenumber+1)
-
-
 
 
 class FileTooLong(GeneralRule):
