@@ -31,7 +31,7 @@ class RequireFirstLettersCapitalized(KeywordRule):
             if word != word.capitalize():
                 if word == word.upper():
                     continue
-                self.report(keyword, "Not suit First Letter Capital in Keywords", keyword.linenumber)
+                self.report(keyword, "Not suit Sentence Capital in Keywords", keyword.linenumber)
                 return
         return
 

@@ -2,9 +2,85 @@ from rflint.common import SuiteRule, ERROR, WARNING
 from rflint.parser import SettingTable
 import re
 
+"""
+5G TAF Coding Rules  - Test Suites Part:
+1. <FeatureFolder> shall correspond to the FeatureId under test, e.g.: "5GC000165"
+2. Name of robot file shall have file suffix as named as ".robot"
+3. Don't use ${CURDIR} or dot when importing from parent directory.
+4. Use dot when importing from the same directory
+5. Docstring shall have purpose of test suite and Author name. If author name is different from the maintainer,\\ 
+   then also a contact shall be listed.
+6. Resource/libraries shall be classified if they are still maintained or out-of-maintenance.\\ 
+   This can be done with a documentation tag: [THIS FILE IS DEPRECATED]. 
+   Documentation tag can be located anywhere within the docstring.\\
+Modified: 6/12/2019 Carson Wu
+"""
+
+
 def normalize_name(string):
     '''convert to lowercase, remove spaces and underscores'''
     return string.replace(" ", "").replace("_", "").lower()
+
+class RequiredRobotFileSuffxAndFolder(SuiteRule):
+    """
+    Rule 2: Name of robot file shall have file suffix as named as ".robot"
+    Author: Carson Wu
+    Modified: 6/12/2019
+    """
+    severity = ERROR
+
+    def apply(self, suite):
+        if ".robot" not in suite.path:
+            self.report(suite, "Required file suffix is \".robot\"", 0)
+        if "5GC" not in suite.path:
+            self.report(suite, "Required Parent folder is \"5GC*\"", 0)
+
+
+class RequirdNoCurdirInImporting(SuiteRule):
+    """
+    Rule 3: Don't use ${CURDIR} or dot when importing from parent directory.
+    Author: Carson Wu
+    Modified: 6/12/2019
+    """
+    severity = ERROR
+
+    def apply(self, suite):
+        for table in suite.tables:
+            if isinstance(table, SettingTable):
+                for row in table.rows:
+                    if row[0] == "Resource":
+                        if "${CURDIR}" in row[1]:
+                            self.report(suite, "Don't use ${CURDIR}", row.linenumber)
+
+
+
+class RequiredAutherInfo(SuiteRule):
+    """
+    Rule 5: Docstring
+    Docstring shall have purpose of test suite and Author name
+    If author name is different from the maintainer,then also a contact shall be listed.
+    Author: Carson Wu
+    Modified: 6/12/2019
+    """
+    severity = ERROR
+
+    def apply(self, suite):
+        for table in suite.tables:
+            if isinstance(table, SettingTable):
+                AuthorFlag = False
+                ContactFlag = False
+                for row in table.rows:
+                    for str in row:
+                        if any(name in str.lower() for name in ["author", "name", "modified"]):
+                            AuthorFlag = True
+                        if any(name in str.lower() for name in ["contact", "mail", "team"]):
+                            ContactFlag = True
+                if AuthorFlag == False:
+                    self.report(suite, "Author name is needed", 1)
+                if ContactFlag == False:
+                    self.report(suite, "Contact list is needed", 1)
+
+
 
 class PeriodInSuiteName(SuiteRule):
     '''Warn about periods in the suite name
