@@ -18,20 +18,6 @@ from rflint.common import TestRule, ERROR, WARNING
 from rflint.parser import SettingTable
 
 
-#class RequiredAllLettersUpperTestName(TestRule):
-#    """
-#    This method is used to required that all  letters in Test Name should be upper.
-#    This is a private coding rule from Nokia TAF
-#    06/08/2019 Carson
-#    """
-#    severity = ERROR
-#
-#    def apply(self, testcase):
-#        if testcase.name == testcase.name.upper():
-#            return
-#        self.report(testcase, "Required All Letters Upper Test Name", testcase.linenumber )
-
-
 class PeriodInTestName(TestRule):
     '''Warn about periods in the testcase name
     
